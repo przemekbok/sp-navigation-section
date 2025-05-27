@@ -1,15 +1,105 @@
 @import '~@fluentui/react/dist/sass/References.scss';
 
+// CUSTOM FONT USAGE:
+// To use custom fonts, you can declare them here or in a separate CSS file
+// Example: @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+// Or load from local assets: @font-face { font-family: 'MyCustomFont'; src: url('../assets/fonts/MyFont.woff2') format('woff2'); }
+
 .spNavigationSection {
   overflow: hidden;
   padding: 1em;
   color: "[theme:bodyText, default: #323130]";
   color: var(--bodyText);
+  
+  // CUSTOM FONT EXAMPLE: 
+  // font-family: 'Roboto', sans-serif; // Use your custom font here
+  
   &.teams {
     font-family: $ms-font-family-fallbacks;
   }
 }
 
+.header {
+  margin: 0 0 20px 0;
+  padding: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: "[theme:neutralPrimary, default: #323130]";
+  color: var(--neutralPrimary);
+  
+  // CUSTOM FONT FOR HEADER EXAMPLE:
+  // font-family: 'Roboto', Arial, sans-serif;
+}
+
+.navigationContent {
+  line-height: 1.6;
+}
+
+.navigationLine {
+  margin-bottom: 8px;
+  line-height: 1.8;
+  
+  // Prevent lines from starting or ending with slashes
+  &:first-child {
+    margin-left: 0;
+  }
+  
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.navigationLink {
+  text-decoration: none;
+  color: "[theme:themePrimary, default: #0078d4]";
+  color: var(--themePrimary);
+  cursor: pointer;
+  display: inline;
+  
+  // Remove any default link styling as requested
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  
+  // CUSTOM FONT FOR LINKS EXAMPLE:
+  // font-family: 'Roboto', Arial, sans-serif;
+  
+  &:hover {
+    color: "[theme:themeDarkAlt, default: #106ebe]";
+    color: var(--themeDarkAlt);
+    text-decoration: none; // Keep no styling on hover as requested
+  }
+  
+  &:visited {
+    color: "[theme:themePrimary, default: #0078d4]";
+    color: var(--themePrimary);
+  }
+  
+  &:focus {
+    outline: 1px solid "[theme:themePrimary, default: #0078d4]";
+    outline: 1px solid var(--themePrimary);
+    outline-offset: 2px;
+  }
+}
+
+.separator {
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+  margin: 0 4px;
+  font-weight: normal;
+}
+
+.noItems {
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+  font-style: italic;
+  padding: 20px 0;
+}
+
+// Legacy styles for backward compatibility
 .welcome {
   text-align: center;
 }
@@ -23,12 +113,12 @@
   a {
     text-decoration: none;
     color: "[theme:link, default:#03787c]";
-    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
+    color: var(--link);
 
     &:hover {
       text-decoration: underline;
       color: "[theme:linkHovered, default: #014446]";
-      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
+      color: var(--linkHovered);
     }
   }
 }
