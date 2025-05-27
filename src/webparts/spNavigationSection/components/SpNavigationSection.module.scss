@@ -26,6 +26,7 @@
   font-weight: 600;
   color: "[theme:neutralPrimary, default: #323130]";
   color: var(--neutralPrimary);
+  text-align: center; // Center the header text
   
   // CUSTOM FONT FOR HEADER EXAMPLE:
   // font-family: 'Roboto', Arial, sans-serif;
@@ -97,6 +98,7 @@
   color: var(--neutralSecondary);
   font-style: italic;
   padding: 20px 0;
+  text-align: center; // Center the "no items" message as well
 }
 
 // Legacy styles for backward compatibility
