@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "sp-navigation-section-solution-client-side-solution",
+    "id": "2974869c-cabf-4fcd-b900-2f44b0810509",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.20.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "sp-navigation-section-solution description"
+      },
+      "longDescription": {
+        "default": "sp-navigation-section-solution description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "sp-navigation-section-solution Feature",
+        "description": "The feature that activates elements of the sp-navigation-section-solution solution.",
+        "id": "ff380f9b-91e0-4748-82a9-7d4802d6b58b",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/sp-navigation-section-solution.sppkg"
+  }
+}
