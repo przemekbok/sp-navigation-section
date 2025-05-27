@@ -4,38 +4,74 @@ import type { ISpNavigationSectionProps } from './ISpNavigationSectionProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 
 export default class SpNavigationSection extends React.Component<ISpNavigationSectionProps> {
+  
+  private renderNavigationItems(): React.ReactElement[] {
+    const { navigationItems } = this.props;
+    const elements: React.ReactElement[] = [];
+    
+    if (!navigationItems || navigationItems.length === 0) {
+      return [<div key="no-items" className={styles.noItems}>No navigation items found. Please configure the webpart properties.</div>];
+    }
+
+    // Group items into chunks of 6
+    for (let i = 0; i < navigationItems.length; i += 6) {
+      const chunk = navigationItems.slice(i, i + 6);
+      const navigationLine = this.createNavigationLine(chunk, i);
+      elements.push(navigationLine);
+    }
+
+    return elements;
+  }
+
+  private createNavigationLine(items: any[], startIndex: number): React.ReactElement {
+    const elements: React.ReactElement[] = [];
+    
+    items.forEach((item, index) => {
+      const key = `nav-item-${startIndex + index}`;
+      
+      // Add hyperlink
+      elements.push(
+        <a 
+          key={key} 
+          href={item.link} 
+          className={styles.navigationLink}
+          target={item.link.startsWith('http') ? '_blank' : '_self'}
+          rel={item.link.startsWith('http') ? 'noreferrer' : undefined}
+        >
+          {escape(item.displayText)}
+        </a>
+      );
+      
+      // Add slash separator if not the last item
+      if (index < items.length - 1) {
+        elements.push(
+          <span key={`separator-${startIndex + index}`} className={styles.separator}> / </span>
+        );
+      }
+    });
+
+    return (
+      <div key={`nav-line-${startIndex}`} className={styles.navigationLine}>
+        {elements}
+      </div>
+    );
+  }
+
   public render(): React.ReactElement<ISpNavigationSectionProps> {
     const {
       description,
-      isDarkTheme,
-      environmentMessage,
-      hasTeamsContext,
-      userDisplayName
+      hasTeamsContext
     } = this.props;
+
+    const navigationElements = this.renderNavigationItems();
 
     return (
       <section className={`${styles.spNavigationSection} ${hasTeamsContext ? styles.teams : ''}`}>
-        <div className={styles.welcome}>
-          <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
-          <h2>Well done, {escape(userDisplayName)}!</h2>
-          <div>{environmentMessage}</div>
-          <div>Web part property value: <strong>{escape(description)}</strong></div>
-        </div>
-        <div>
-          <h3>Welcome to SharePoint Framework!</h3>
-          <p>
-            The SharePoint Framework (SPFx) is a extensibility model for Microsoft Viva, Microsoft Teams and SharePoint. It&#39;s the easiest way to extend Microsoft 365 with automatic Single Sign On, automatic hosting and industry standard tooling.
-          </p>
-          <h4>Learn more about SPFx development:</h4>
-          <ul className={styles.links}>
-            <li><a href="https://aka.ms/spfx" target="_blank" rel="noreferrer">SharePoint Framework Overview</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-graph" target="_blank" rel="noreferrer">Use Microsoft Graph in your solution</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-teams" target="_blank" rel="noreferrer">Build for Microsoft Teams using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-viva" target="_blank" rel="noreferrer">Build for Microsoft Viva Connections using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-store" target="_blank" rel="noreferrer">Publish SharePoint Framework applications to the marketplace</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank" rel="noreferrer">SharePoint Framework API reference</a></li>
-            <li><a href="https://aka.ms/m365pnp" target="_blank" rel="noreferrer">Microsoft 365 Developer Community</a></li>
-          </ul>
+        {description && (
+          <h2 className={styles.header}>{escape(description)}</h2>
+        )}
+        <div className={styles.navigationContent}>
+          {navigationElements}
         </div>
       </section>
     );
