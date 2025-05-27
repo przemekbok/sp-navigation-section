@@ -2,6 +2,9 @@ declare interface ISpNavigationSectionWebPartStrings {
   PropertyPaneDescription: string;
   BasicGroupName: string;
   DescriptionFieldLabel: string;
+  NavigationListLabel: string;
+  CreateNewListText: string;
+  ViewSelectedListText: string;
   AppLocalEnvironmentSharePoint: string;
   AppLocalEnvironmentTeams: string;
   AppLocalEnvironmentOffice: string;
