@@ -58,12 +58,26 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
     });
   }
 
+  protected onPropertyPaneConfigurationStart(): void {
+    if (this._lists.length === 0) {
+      this._loadLists().then(() => {
+        this.context.propertyPane.refresh();
+      });
+    }
+  }
+
   protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {
+    super.onPropertyPaneFieldChanged(propertyPath, oldValue, newValue);
+    
     if (propertyPath === 'selectedListId' && newValue !== oldValue) {
       this.properties.selectedListId = newValue;
       this._loadNavigationItems().then(() => {
         this.render();
+        this.context.propertyPane.refresh();
       });
+    } else if (propertyPath === 'description' && newValue !== oldValue) {
+      this.properties.description = newValue;
+      this.render();
     }
   }
 
@@ -83,6 +97,7 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
           id: list.Id,
           title: list.Title
         }));
+        console.log('Lists loaded:', this._lists);
       })
       .catch((error) => {
         console.error('Error loading lists:', error);
@@ -96,7 +111,10 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
       return Promise.resolve();
     }
 
-    const url = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists('${this.properties.selectedListId}')/items?$select=Title,Display_x0020_Text,Link&$orderby=ID`;
+    console.log('Loading navigation items for list:', this.properties.selectedListId);
+    
+    // Try multiple field name variations for better compatibility
+    const url = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists('${this.properties.selectedListId}')/items?$select=Id,Title,Display_x0020_Text,DisplayText,Link&$orderby=ID`;
     
     return this.context.spHttpClient.get(url, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
@@ -107,10 +125,30 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
         }
       })
       .then((data: any) => {
-        this._navigationItems = data.value.map((item: any) => ({
-          displayText: item.Display_x0020_Text || item.Title,
-          link: item.Link?.Url || item.Link || '#'
-        }));
+        console.log('Raw list data:', data);
+        this._navigationItems = data.value.map((item: any) => {
+          // Handle different field name possibilities
+          const displayText = item.Display_x0020_Text || item.DisplayText || item.Title || 'Untitled';
+          let link = '#';
+          
+          // Handle different link field formats
+          if (item.Link) {
+            if (typeof item.Link === 'string') {
+              link = item.Link;
+            } else if (item.Link.Url) {
+              link = item.Link.Url;
+            } else if (item.Link.Description) {
+              link = item.Link.Description;
+            }
+          }
+          
+          return {
+            displayText: displayText,
+            link: link
+          };
+        });
+        
+        console.log('Navigation items loaded:', this._navigationItems);
       })
       .catch((error) => {
         console.error('Error loading navigation items:', error);
@@ -172,14 +210,17 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    const listOptions: IPropertyPaneDropdownOption[] = this._lists.map(list => ({
-      key: list.id,
-      text: list.title
-    }));
+    const listOptions: IPropertyPaneDropdownOption[] = [
+      { key: '', text: 'Select a list...' },
+      ...this._lists.map(list => ({
+        key: list.id,
+        text: list.title
+      }))
+    ];
 
     const selectedList = this._lists.find(list => list.id === this.properties.selectedListId);
-    const newListUrl = `${this.context.pageContext.web.absoluteUrl}/_layouts/15/new.aspx?List={lists}`;
-    const listViewUrl = selectedList ? `${this.context.pageContext.web.absoluteUrl}/Lists/${selectedList.title}` : '#';
+    const newListUrl = `${this.context.pageContext.web.absoluteUrl}/_layouts/15/new.aspx`;
+    const listViewUrl = selectedList ? `${this.context.pageContext.web.absoluteUrl}/Lists/${selectedList.title.replace(/\s+/g, '')}` : '#';
 
     return {
       pages: [
@@ -192,7 +233,8 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
               groupName: 'Navigation Settings',
               groupFields: [
                 PropertyPaneTextField('description', {
-                  label: 'Header Text'
+                  label: 'Header Text',
+                  placeholder: 'Enter header text...'
                 }),
                 PropertyPaneDropdown('selectedListId', {
                   label: 'Select Navigation List',
