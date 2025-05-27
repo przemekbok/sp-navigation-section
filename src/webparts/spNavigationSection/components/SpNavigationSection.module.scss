@@ -93,12 +93,140 @@
   font-weight: normal;
 }
 
-.noItems {
+// Loading state styles
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.loadingSpinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid "[theme:neutralLight, default: #edebe9]";
+  border: 2px solid var(--neutralLight);
+  border-top: 2px solid "[theme:themePrimary, default: #0078d4]";
+  border-top: 2px solid var(--themePrimary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loadingText {
   color: "[theme:neutralSecondary, default: #605e5c]";
   color: var(--neutralSecondary);
-  font-style: italic;
-  padding: 20px 0;
-  text-align: center; // Center the "no items" message as well
+  font-size: 14px;
+}
+
+// Error state styles
+.errorContainer {
+  padding: 20px;
+  margin: 10px 0;
+  background-color: "[theme:errorBackground, default: #fef7f7]";
+  background-color: var(--errorBackground, #fef7f7);
+  border: 1px solid "[theme:errorText, default: #d13438]";
+  border: 1px solid var(--errorText, #d13438);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.errorIcon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.errorText {
+  color: "[theme:errorText, default: #d13438]";
+  color: var(--errorText, #d13438);
+  font-weight: 600;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.errorHelp {
+  text-align: left;
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+  font-size: 13px;
+  margin-top: 10px;
+  
+  strong {
+    color: "[theme:neutralPrimary, default: #323130]";
+    color: var(--neutralPrimary);
+  }
+  
+  ul {
+    margin: 8px 0 0 20px;
+    padding: 0;
+    
+    li {
+      margin-bottom: 4px;
+    }
+  }
+}
+
+// Configuration message styles
+.configurationMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  text-align: center;
+  background-color: "[theme:neutralLighterAlt, default: #faf9f8]";
+  background-color: var(--neutralLighterAlt, #faf9f8);
+  border: 1px dashed "[theme:neutralTertiary, default: #a19f9d]";
+  border: 1px dashed var(--neutralTertiary, #a19f9d);
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.configIcon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.configText {
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+// No items state styles
+.noItems {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  text-align: center;
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+}
+
+.noItemsIcon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.noItemsText {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: "[theme:neutralPrimary, default: #323130]";
+  color: var(--neutralPrimary);
+}
+
+.noItemsHelp {
+  font-size: 13px;
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
 }
 
 // Legacy styles for backward compatibility
