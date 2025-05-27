@@ -7,6 +7,8 @@ export interface ISpNavigationSectionProps {
   selectedListId: string;
   navigationItems: INavigationItem[];
   siteUrl: string;
+  isLoading: boolean;
+  errorMessage: string;
 }
 
 export interface INavigationItem {
