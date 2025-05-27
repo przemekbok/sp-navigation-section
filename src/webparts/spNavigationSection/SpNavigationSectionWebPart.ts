@@ -27,6 +27,8 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
   private _environmentMessage: string = '';
   private _lists: IListInfo[] = [];
   private _navigationItems: INavigationItem[] = [];
+  private _isLoading: boolean = false;
+  private _errorMessage: string = '';
 
   public render(): void {
     const element: React.ReactElement<ISpNavigationSectionProps> = React.createElement(
@@ -39,7 +41,9 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
         userDisplayName: this.context.pageContext.user.displayName,
         selectedListId: this.properties.selectedListId,
         navigationItems: this._navigationItems,
-        siteUrl: this.context.pageContext.web.absoluteUrl
+        siteUrl: this.context.pageContext.web.absoluteUrl,
+        isLoading: this._isLoading,
+        errorMessage: this._errorMessage
       }
     );
 
@@ -71,6 +75,7 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
     
     if (propertyPath === 'selectedListId' && newValue !== oldValue) {
       this.properties.selectedListId = newValue;
+      this._errorMessage = '';
       this._loadNavigationItems().then(() => {
         this.render();
         this.context.propertyPane.refresh();
@@ -89,7 +94,7 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error(`Failed to load lists: ${response.statusText}`);
+          throw new Error(`Failed to load lists: ${response.status} ${response.statusText}`);
         }
       })
       .then((data: any) => {
@@ -97,48 +102,103 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
           id: list.Id,
           title: list.Title
         }));
-        console.log('Lists loaded:', this._lists);
+        console.log('Lists loaded successfully:', this._lists.length);
       })
       .catch((error) => {
         console.error('Error loading lists:', error);
         this._lists = [];
+        this._errorMessage = `Failed to load lists: ${error.message}`;
       });
   }
 
-  private _loadNavigationItems(): Promise<void> {
+  private async _loadNavigationItems(): Promise<void> {
     if (!this.properties.selectedListId) {
       this._navigationItems = [];
+      this._errorMessage = '';
       return Promise.resolve();
     }
 
-    console.log('Loading navigation items for list:', this.properties.selectedListId);
+    this._isLoading = true;
+    this._errorMessage = '';
+    this.render(); // Show loading state
+
+    console.log('Loading navigation items for list ID:', this.properties.selectedListId);
     
-    // Try multiple field name variations for better compatibility
-    const url = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists('${this.properties.selectedListId}')/items?$select=Id,Title,Display_x0020_Text,DisplayText,Link&$orderby=ID`;
-    
-    return this.context.spHttpClient.get(url, SPHttpClient.configurations.v1)
-      .then((response: SPHttpClientResponse) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error(`Failed to load navigation items: ${response.statusText}`);
-        }
-      })
-      .then((data: any) => {
-        console.log('Raw list data:', data);
-        this._navigationItems = data.value.map((item: any) => {
-          // Handle different field name possibilities
-          const displayText = item.Display_x0020_Text || item.DisplayText || item.Title || 'Untitled';
-          let link = '#';
+    try {
+      // First, get the list fields to understand the structure
+      const fieldsUrl = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists(guid'${this.properties.selectedListId}')/fields?$select=InternalName,Title,TypeAsString&$filter=Hidden eq false`;
+      
+      const fieldsResponse = await this.context.spHttpClient.get(fieldsUrl, SPHttpClient.configurations.v1);
+      if (!fieldsResponse.ok) {
+        throw new Error(`Failed to load list fields: ${fieldsResponse.status} ${fieldsResponse.statusText}`);
+      }
+      
+      const fieldsData = await fieldsResponse.json();
+      const fields = fieldsData.value;
+      console.log('Available fields:', fields);
+      
+      // Find display text field (look for common variations)
+      const displayTextField = fields.find((field: any) => 
+        field.InternalName === 'Display_x0020_Text' || 
+        field.InternalName === 'DisplayText' ||
+        field.InternalName === 'NavigationText' ||
+        field.Title === 'Display Text'
+      );
+      
+      // Find link field
+      const linkField = fields.find((field: any) => 
+        field.InternalName === 'Link' ||
+        field.InternalName === 'URL' ||
+        field.InternalName === 'NavigationLink' ||
+        field.TypeAsString === 'URL' ||
+        field.Title === 'Link'
+      );
+      
+      console.log('Display field found:', displayTextField);
+      console.log('Link field found:', linkField);
+      
+      // Build select fields - always include Title, add others if they exist
+      let selectFields = 'Id,Title';
+      if (displayTextField) {
+        selectFields += `,${displayTextField.InternalName}`;
+      }
+      if (linkField) {
+        selectFields += `,${linkField.InternalName}`;
+      }
+      
+      // Now get the list items
+      const itemsUrl = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists(guid'${this.properties.selectedListId}')/items?$select=${selectFields}&$orderby=ID&$top=100`;
+      console.log('Items URL:', itemsUrl);
+      
+      const itemsResponse = await this.context.spHttpClient.get(itemsUrl, SPHttpClient.configurations.v1);
+      if (!itemsResponse.ok) {
+        throw new Error(`Failed to load navigation items: ${itemsResponse.status} ${itemsResponse.statusText}`);
+      }
+      
+      const itemsData = await itemsResponse.json();
+      console.log('Raw list items:', itemsData);
+      
+      if (!itemsData.value || itemsData.value.length === 0) {
+        this._navigationItems = [];
+        this._errorMessage = 'No items found in the selected list. Please add items to the list or create the required columns (Display Text, Link).';
+      } else {
+        this._navigationItems = itemsData.value.map((item: any) => {
+          // Get display text
+          let displayText = item.Title || 'Untitled';
+          if (displayTextField && item[displayTextField.InternalName]) {
+            displayText = item[displayTextField.InternalName];
+          }
           
-          // Handle different link field formats
-          if (item.Link) {
-            if (typeof item.Link === 'string') {
-              link = item.Link;
-            } else if (item.Link.Url) {
-              link = item.Link.Url;
-            } else if (item.Link.Description) {
-              link = item.Link.Description;
+          // Get link
+          let link = '#';
+          if (linkField && item[linkField.InternalName]) {
+            const linkValue = item[linkField.InternalName];
+            if (typeof linkValue === 'string') {
+              link = linkValue;
+            } else if (linkValue && linkValue.Url) {
+              link = linkValue.Url;
+            } else if (linkValue && linkValue.Description) {
+              link = linkValue.Description;
             }
           }
           
@@ -148,12 +208,20 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
           };
         });
         
-        console.log('Navigation items loaded:', this._navigationItems);
-      })
-      .catch((error) => {
-        console.error('Error loading navigation items:', error);
-        this._navigationItems = [];
-      });
+        console.log('Navigation items processed:', this._navigationItems);
+        
+        if (this._navigationItems.length === 0) {
+          this._errorMessage = 'No valid navigation items found. Please check that your list has items with the required fields.';
+        }
+      }
+      
+    } catch (error) {
+      console.error('Error loading navigation items:', error);
+      this._navigationItems = [];
+      this._errorMessage = `Error loading navigation items: ${error.message}. Please check that the list exists and has the required permissions.`;
+    } finally {
+      this._isLoading = false;
+    }
   }
 
   private _getEnvironmentMessage(): Promise<string> {
