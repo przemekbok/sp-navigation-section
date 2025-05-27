@@ -33,13 +33,15 @@
 }
 
 .navigationContent {
-  line-height: 1.8; // Increased line height for better spacing with larger text
-  font-size: 16px; // Base font size for navigation area
+  line-height: 2.0; // Increased line height for better spacing with larger text
+  font-size: 18px; // Increased base font size for navigation area
+  text-align: center; // Center the navigation content
 }
 
 .navigationLine {
-  margin-bottom: 12px; // Increased margin for better spacing with larger text
-  line-height: 1.8;
+  margin-bottom: 15px; // Increased margin for better spacing with larger text
+  line-height: 2.0;
+  text-align: center; // Center each navigation line
   
   // Prevent lines from starting or ending with slashes
   &:first-child {
@@ -57,12 +59,12 @@
   color: var(--themePrimary);
   cursor: pointer; // Ensure pointer cursor is set
   display: inline;
-  font-size: 16px; // Larger font size for navigation links
+  font-size: 18px; // Larger font size for navigation links
   
   // Remove any default link styling as requested
   border: none;
   background: none;
-  padding: 2px 0; // Small padding for better click target
+  padding: 3px 0; // Slightly larger padding for better click target
   margin: 0;
   font-weight: 400; // Regular weight for readability
   
@@ -101,9 +103,9 @@
 .separator {
   color: "[theme:neutralSecondary, default: #605e5c]";
   color: var(--neutralSecondary);
-  margin: 0 6px; // Slightly larger margin for better spacing with larger text
+  margin: 0 8px; // Larger margin for better spacing with larger text
   font-weight: normal;
-  font-size: 16px; // Match the navigation link font size
+  font-size: 18px; // Match the navigation link font size
 }
 
 // Loading state styles
