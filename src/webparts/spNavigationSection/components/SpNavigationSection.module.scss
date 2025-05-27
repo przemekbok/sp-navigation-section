@@ -33,11 +33,12 @@
 }
 
 .navigationContent {
-  line-height: 1.6;
+  line-height: 1.8; // Increased line height for better spacing with larger text
+  font-size: 16px; // Base font size for navigation area
 }
 
 .navigationLine {
-  margin-bottom: 8px;
+  margin-bottom: 12px; // Increased margin for better spacing with larger text
   line-height: 1.8;
   
   // Prevent lines from starting or ending with slashes
@@ -54,16 +55,16 @@
   text-decoration: none;
   color: "[theme:themePrimary, default: #0078d4]";
   color: var(--themePrimary);
-  cursor: pointer;
+  cursor: pointer; // Ensure pointer cursor is set
   display: inline;
+  font-size: 16px; // Larger font size for navigation links
   
   // Remove any default link styling as requested
   border: none;
   background: none;
-  padding: 0;
+  padding: 2px 0; // Small padding for better click target
   margin: 0;
-  font-size: inherit;
-  font-weight: inherit;
+  font-weight: 400; // Regular weight for readability
   
   // CUSTOM FONT FOR LINKS EXAMPLE:
   // font-family: 'Roboto', Arial, sans-serif;
@@ -72,6 +73,10 @@
     color: "[theme:themeDarkAlt, default: #106ebe]";
     color: var(--themeDarkAlt);
     text-decoration: none; // Keep no styling on hover as requested
+    cursor: pointer; // Explicitly set pointer cursor on hover
+    // Optional: subtle background highlight on hover (uncomment if desired)
+    // background-color: rgba(0, 120, 212, 0.05);
+    // border-radius: 2px;
   }
   
   &:visited {
@@ -80,17 +85,25 @@
   }
   
   &:focus {
-    outline: 1px solid "[theme:themePrimary, default: #0078d4]";
-    outline: 1px solid var(--themePrimary);
+    outline: 2px solid "[theme:themePrimary, default: #0078d4]";
+    outline: 2px solid var(--themePrimary);
     outline-offset: 2px;
+    cursor: pointer;
+  }
+  
+  &:active {
+    color: "[theme:themeDark, default: #005a9e]";
+    color: var(--themeDark);
+    cursor: pointer;
   }
 }
 
 .separator {
   color: "[theme:neutralSecondary, default: #605e5c]";
   color: var(--neutralSecondary);
-  margin: 0 4px;
+  margin: 0 6px; // Slightly larger margin for better spacing with larger text
   font-weight: normal;
+  font-size: 16px; // Match the navigation link font size
 }
 
 // Loading state styles
