@@ -2,16 +2,18 @@
 
 ## Summary
 
-A SharePoint Framework (SPFx) webpart that displays navigation links from a SharePoint list. The webpart shows navigation items as clickable links separated by slashes, with 6 items per line. Each link comes from a SharePoint list with configurable "Display Text" and "Link" columns.
+A SharePoint Framework (SPFx) webpart that displays navigation links from a SharePoint list organized by sections. The webpart groups navigation items by section headers, displaying links separated by slashes with 6 items per line within each section. Each link comes from a SharePoint list with configurable "Display Text", "Link", and "Section" columns.
 
 ![SharePoint Framework Version](https://img.shields.io/badge/version-1.20.0-green.svg)
 
 ## Features
 
+- **Section Grouping**: Automatically groups navigation items by section
 - **Dynamic List Selection**: Choose any SharePoint list from the current site
-- **Configurable Header**: Set custom header text for the navigation section
+- **Configurable Header**: Set custom header text for the entire navigation
+- **Section Headers**: Each section displays its own header with visual separation
 - **Slash-Separated Links**: Navigation links displayed with slash separators (no styling)
-- **Responsive Layout**: 6 navigation items per line, automatically wrapping
+- **Responsive Layout**: 6 navigation items per line within each section, automatically wrapping
 - **Property Pane Integration**: Easy configuration with dropdown list selection
 - **Quick Actions**: Direct links to create new lists or view selected list
 - **Custom Font Support**: Built-in directions for implementing custom fonts
@@ -25,17 +27,22 @@ Create a SharePoint list with the following columns:
 | Title | Single line of text | Default SharePoint title column |
 | Display Text | Single line of text | Text to display for the navigation link |
 | Link | Hyperlink or Single line of text | URL for the navigation link |
+| Section | Choice | Section grouping for the navigation item |
 
 ### Sample List Data:
 
-| Title | Display Text | Link |
-|-------|-------------|------|
-| Home | Home | https://contoso.sharepoint.com |
-| About | About Us | https://contoso.sharepoint.com/about |
-| Services | Our Services | https://contoso.sharepoint.com/services |
-| Contact | Contact | https://contoso.sharepoint.com/contact |
-| Blog | Company Blog | https://contoso.sharepoint.com/blog |
-| Careers | Join Us | https://contoso.sharepoint.com/careers |
+| Title | Display Text | Link | Section |
+|-------|-------------|------|---------|
+| Home | Home | https://contoso.sharepoint.com | Main Navigation |
+| About | About Us | https://contoso.sharepoint.com/about | Main Navigation |
+| Services | Our Services | https://contoso.sharepoint.com/services | Main Navigation |
+| Contact | Contact | https://contoso.sharepoint.com/contact | Main Navigation |
+| HR Portal | Human Resources | https://contoso.sharepoint.com/hr | Employee Resources |
+| IT Support | IT Help Desk | https://contoso.sharepoint.com/it | Employee Resources |
+| Benefits | Employee Benefits | https://contoso.sharepoint.com/benefits | Employee Resources |
+| Training | Training Portal | https://contoso.sharepoint.com/training | Employee Resources |
+| Blog | Company Blog | https://contoso.sharepoint.com/blog | News & Updates |
+| Announcements | Latest News | https://contoso.sharepoint.com/news | News & Updates |
 
 ## Installation & Setup
 
@@ -51,7 +58,7 @@ Create a SharePoint list with the following columns:
    ```bash
    git clone https://github.com/przemekbok/sp-navigation-section.git
    cd sp-navigation-section
-   git checkout feature/navigation-webpart
+   git checkout feature/section-grouping
    ```
 
 2. **Install dependencies**
@@ -75,8 +82,11 @@ Create a SharePoint list with the following columns:
 1. **Create Navigation List**
    - Go to your SharePoint site
    - Create a new list (or use the "Create New List" link in webpart properties)
-   - Add the required columns: "Display Text" and "Link"
-   - Add your navigation items
+   - Add the required columns:
+     - **Display Text** (Single line of text)
+     - **Link** (Hyperlink or Single line of text)
+     - **Section** (Choice column with your section names)
+   - Add your navigation items with appropriate section assignments
 
 2. **Add WebPart to Page**
    - Edit a SharePoint page
@@ -87,9 +97,11 @@ Create a SharePoint list with the following columns:
      - Use quick links to create new list or view selected list
 
 3. **Customize Appearance**
-   - The webpart automatically displays 6 navigation items per line
+   - Navigation items are automatically grouped by section
+   - Each section displays a header with a bottom border
+   - Within each section, items display 6 per line
    - Links are separated by forward slashes
-   - No special styling is applied to maintain clean appearance
+   - Sections are sorted alphabetically
 
 ## Custom Font Usage
 
@@ -111,6 +123,12 @@ Edit `src/webparts/spNavigationSection/components/SpNavigationSection.module.scs
 .header {
   font-family: 'Roboto', Arial, sans-serif;
   font-weight: 700;
+}
+
+// Apply to section headers
+.sectionHeader {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-weight: 600;
 }
 
 // Apply to navigation links
@@ -172,7 +190,7 @@ gulp package-solution --ship
 
 | Property | Type | Description |
 |----------|------|-------------|
-| description | string | Header text displayed above navigation items |
+| description | string | Header text displayed above navigation sections |
 | selectedListId | string | GUID of the selected SharePoint list |
 
 ## Technical Implementation
@@ -194,7 +212,8 @@ gulp package-solution --ship
 
 | Version | Date | Comments |
 |---------|------|----------|
-| 1.0.0 | 2025-05-27 | Initial navigation webpart implementation |
+| 1.0.0 | 2025-06-22 | Initial navigation webpart implementation |
+| 2.0.0 | 2025-06-23 | Added section grouping functionality |
 
 ## Authors
 
