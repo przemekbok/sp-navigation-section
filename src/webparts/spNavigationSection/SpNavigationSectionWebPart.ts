@@ -14,7 +14,7 @@ import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 
 import * as strings from 'SpNavigationSectionWebPartStrings';
 import SpNavigationSection from './components/SpNavigationSection';
-import { ISpNavigationSectionProps, INavigationItem, IListInfo } from './components/ISpNavigationSectionProps';
+import { ISpNavigationSectionProps, INavigationItem, INavigationSection, IListInfo } from './components/ISpNavigationSectionProps';
 
 export interface ISpNavigationSectionWebPartProps {
   description: string;
@@ -26,7 +26,7 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = '';
   private _lists: IListInfo[] = [];
-  private _navigationItems: INavigationItem[] = [];
+  private _navigationSections: INavigationSection[] = [];
   private _isLoading: boolean = false;
   private _errorMessage: string = '';
 
@@ -40,7 +40,7 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
         userDisplayName: this.context.pageContext.user.displayName,
         selectedListId: this.properties.selectedListId,
-        navigationItems: this._navigationItems,
+        navigationSections: this._navigationSections,
         siteUrl: this.context.pageContext.web.absoluteUrl,
         isLoading: this._isLoading,
         errorMessage: this._errorMessage
@@ -113,7 +113,7 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
 
   private async _loadNavigationItems(): Promise<void> {
     if (!this.properties.selectedListId) {
-      this._navigationItems = [];
+      this._navigationSections = [];
       this._errorMessage = '';
       return Promise.resolve();
     }
@@ -153,9 +153,17 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
         field.TypeAsString === 'URL' ||
         field.Title === 'Link'
       );
+
+      // Find section field
+      const sectionField = fields.find((field: any) => 
+        field.InternalName === 'Section' ||
+        field.InternalName === 'NavigationSection' ||
+        field.Title === 'Section'
+      );
       
       console.log('Display field found:', displayTextField);
       console.log('Link field found:', linkField);
+      console.log('Section field found:', sectionField);
       
       // Build select fields - always include Title, add others if they exist
       let selectFields = 'Id,Title';
@@ -165,9 +173,12 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
       if (linkField) {
         selectFields += `,${linkField.InternalName}`;
       }
+      if (sectionField) {
+        selectFields += `,${sectionField.InternalName}`;
+      }
       
       // Now get the list items
-      const itemsUrl = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists(guid'${this.properties.selectedListId}')/items?$select=${selectFields}&$orderby=ID&$top=100`;
+      const itemsUrl = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists(guid'${this.properties.selectedListId}')/items?$select=${selectFields}&$orderby=ID&$top=500`;
       console.log('Items URL:', itemsUrl);
       
       const itemsResponse = await this.context.spHttpClient.get(itemsUrl, SPHttpClient.configurations.v1);
@@ -179,10 +190,11 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
       console.log('Raw list items:', itemsData);
       
       if (!itemsData.value || itemsData.value.length === 0) {
-        this._navigationItems = [];
-        this._errorMessage = 'No items found in the selected list. Please add items to the list or create the required columns (Display Text, Link).';
+        this._navigationSections = [];
+        this._errorMessage = 'No items found in the selected list. Please add items to the list or create the required columns (Display Text, Link, Section).';
       } else {
-        this._navigationItems = itemsData.value.map((item: any) => {
+        // Map items to navigation items
+        const navigationItems: INavigationItem[] = itemsData.value.map((item: any) => {
           // Get display text
           let displayText = item.Title || 'Untitled';
           if (displayTextField && item[displayTextField.InternalName]) {
@@ -201,23 +213,48 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
               link = linkValue.Description;
             }
           }
+
+          // Get section
+          let section = 'General'; // Default section
+          if (sectionField && item[sectionField.InternalName]) {
+            section = item[sectionField.InternalName];
+          }
           
           return {
             displayText: displayText,
-            link: link
+            link: link,
+            section: section
           };
         });
         
-        console.log('Navigation items processed:', this._navigationItems);
+        // Group items by section
+        const sectionsMap = new Map<string, INavigationItem[]>();
+        navigationItems.forEach(item => {
+          const section = item.section;
+          if (!sectionsMap.has(section)) {
+            sectionsMap.set(section, []);
+          }
+          sectionsMap.get(section)!.push(item);
+        });
+
+        // Convert map to array of sections
+        this._navigationSections = Array.from(sectionsMap.entries())
+          .map(([section, items]) => ({
+            section: section,
+            items: items
+          }))
+          .sort((a, b) => a.section.localeCompare(b.section)); // Sort sections alphabetically
         
-        if (this._navigationItems.length === 0) {
+        console.log('Navigation sections processed:', this._navigationSections);
+        
+        if (this._navigationSections.length === 0) {
           this._errorMessage = 'No valid navigation items found. Please check that your list has items with the required fields.';
         }
       }
       
     } catch (error) {
       console.error('Error loading navigation items:', error);
-      this._navigationItems = [];
+      this._navigationSections = [];
       this._errorMessage = `Error loading navigation items: ${error.message}. Please check that the list exists and has the required permissions.`;
     } finally {
       this._isLoading = false;
