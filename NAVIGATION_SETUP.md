@@ -2,7 +2,7 @@
 
 ## Summary
 
-A SharePoint Framework (SPFx) webpart that displays navigation links from a SharePoint list organized by sections. The webpart groups navigation items by section headers, displaying links separated by slashes with 6 items per line within each section. Each link comes from a SharePoint list with configurable "Display Text", "Link", and "Section" columns.
+A SharePoint Framework (SPFx) webpart that displays navigation links from a SharePoint list organized by sections. The webpart groups navigation items by section headers, displaying links separated by slashes with 6 items per line within each section. Each section displays its name as a prominent header. Navigation data comes from a SharePoint list with configurable "Display Text", "Link", and "Section" columns.
 
 ![SharePoint Framework Version](https://img.shields.io/badge/version-1.20.0-green.svg)
 
@@ -10,8 +10,7 @@ A SharePoint Framework (SPFx) webpart that displays navigation links from a Shar
 
 - **Section Grouping**: Automatically groups navigation items by section
 - **Dynamic List Selection**: Choose any SharePoint list from the current site
-- **Configurable Header**: Set custom header text for the entire navigation
-- **Section Headers**: Each section displays its own header with visual separation
+- **Section Headers**: Each section displays its name as a prominent header (24px font size)
 - **Slash-Separated Links**: Navigation links displayed with slash separators (no styling)
 - **Responsive Layout**: 6 navigation items per line within each section, automatically wrapping
 - **Property Pane Integration**: Easy configuration with dropdown list selection
@@ -92,13 +91,12 @@ Create a SharePoint list with the following columns:
    - Edit a SharePoint page
    - Add the "SP Navigation Section" webpart
    - Configure the webpart properties:
-     - **Header Text**: Enter the title for your navigation section
      - **Select Navigation List**: Choose your navigation list from the dropdown
      - Use quick links to create new list or view selected list
 
 3. **Customize Appearance**
    - Navigation items are automatically grouped by section
-   - Each section displays a header with a bottom border
+   - Each section displays its name as a prominent header
    - Within each section, items display 6 per line
    - Links are separated by forward slashes
    - Sections are sorted alphabetically
@@ -117,12 +115,6 @@ Edit `src/webparts/spNavigationSection/components/SpNavigationSection.module.scs
 // Apply to main container
 .spNavigationSection {
   font-family: 'Roboto', Arial, sans-serif;
-}
-
-// Apply to header specifically
-.header {
-  font-family: 'Roboto', Arial, sans-serif;
-  font-weight: 700;
 }
 
 // Apply to section headers
@@ -190,7 +182,6 @@ gulp package-solution --ship
 
 | Property | Type | Description |
 |----------|------|-------------|
-| description | string | Header text displayed above navigation sections |
 | selectedListId | string | GUID of the selected SharePoint list |
 
 ## Technical Implementation
@@ -214,6 +205,7 @@ gulp package-solution --ship
 |---------|------|----------|
 | 1.0.0 | 2025-06-22 | Initial navigation webpart implementation |
 | 2.0.0 | 2025-06-23 | Added section grouping functionality |
+| 2.1.0 | 2025-06-23 | Removed header text property, section headers are now main headers |
 
 ## Authors
 
