@@ -68,7 +68,7 @@ export default class SpNavigationSection extends React.Component<ISpNavigationSe
       
       return (
         <div key={`section-${sectionIndex}`} className={styles.navigationSectionContainer}>
-          <h3 className={styles.sectionHeader}>{escape(section.section)}</h3>
+          <h2 className={styles.sectionHeader}>{escape(section.section)}</h2>
           <div className={styles.navigationContent}>
             {navigationElements}
           </div>
@@ -142,16 +142,10 @@ export default class SpNavigationSection extends React.Component<ISpNavigationSe
   }
 
   public render(): React.ReactElement<ISpNavigationSectionProps> {
-    const {
-      description,
-      hasTeamsContext
-    } = this.props;
+    const { hasTeamsContext } = this.props;
 
     return (
       <section className={`${styles.spNavigationSection} ${hasTeamsContext ? styles.teams : ''}`}>
-        {description && (
-          <h2 className={styles.header}>{escape(description)}</h2>
-        )}
         {this.renderContent()}
       </section>
     );
