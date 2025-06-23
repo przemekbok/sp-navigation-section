@@ -3,7 +3,6 @@ import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
-  PropertyPaneTextField,
   PropertyPaneDropdown,
   PropertyPaneLink,
   IPropertyPaneDropdownOption
@@ -17,7 +16,6 @@ import SpNavigationSection from './components/SpNavigationSection';
 import { ISpNavigationSectionProps, INavigationItem, INavigationSection, IListInfo } from './components/ISpNavigationSectionProps';
 
 export interface ISpNavigationSectionWebPartProps {
-  description: string;
   selectedListId: string;
 }
 
@@ -34,7 +32,6 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
     const element: React.ReactElement<ISpNavigationSectionProps> = React.createElement(
       SpNavigationSection,
       {
-        description: this.properties.description,
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -80,9 +77,6 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
         this.render();
         this.context.propertyPane.refresh();
       });
-    } else if (propertyPath === 'description' && newValue !== oldValue) {
-      this.properties.description = newValue;
-      this.render();
     }
   }
 
@@ -337,10 +331,6 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
             {
               groupName: 'Navigation Settings',
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: 'Header Text',
-                  placeholder: 'Enter header text...'
-                }),
                 PropertyPaneDropdown('selectedListId', {
                   label: 'Select Navigation List',
                   options: listOptions,
