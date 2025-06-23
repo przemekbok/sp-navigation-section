@@ -19,22 +19,9 @@
   }
 }
 
-.header {
-  margin: 0 0 20px 0;
-  padding: 0;
-  font-size: 24px;
-  font-weight: 600;
-  color: "[theme:neutralPrimary, default: #323130]";
-  color: var(--neutralPrimary);
-  text-align: center; // Center the header text
-  
-  // CUSTOM FONT FOR HEADER EXAMPLE:
-  // font-family: 'Roboto', Arial, sans-serif;
-}
-
 // Sections container
 .sectionsContainer {
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 // Individual section container
@@ -46,18 +33,15 @@
   }
 }
 
-// Section header styling
+// Section header styling - now the main header style
 .sectionHeader {
-  margin: 0 0 15px 0;
+  margin: 0 0 20px 0;
   padding: 0;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   color: "[theme:neutralPrimary, default: #323130]";
   color: var(--neutralPrimary);
   text-align: center;
-  border-bottom: 2px solid "[theme:neutralLight, default: #edebe9]";
-  border-bottom: 2px solid var(--neutralLight);
-  padding-bottom: 8px;
   
   // CUSTOM FONT FOR SECTION HEADERS EXAMPLE:
   // font-family: 'Roboto', Arial, sans-serif;
@@ -298,4 +282,18 @@
       color: var(--linkHovered);
     }
   }
+}
+
+// Legacy header class (no longer used but kept for backward compatibility)
+.header {
+  margin: 0 0 20px 0;
+  padding: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: "[theme:neutralPrimary, default: #323130]";
+  color: var(--neutralPrimary);
+  text-align: center;
+  
+  // CUSTOM FONT FOR HEADER EXAMPLE:
+  // font-family: 'Roboto', Arial, sans-serif;
 }
