@@ -1,21 +1,20 @@
 import * as React from 'react';
 import styles from './SpNavigationSection.module.scss';
-import type { ISpNavigationSectionProps } from './ISpNavigationSectionProps';
+import type { ISpNavigationSectionProps, INavigationSection } from './ISpNavigationSectionProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 
 export default class SpNavigationSection extends React.Component<ISpNavigationSectionProps> {
   
-  private renderNavigationItems(): React.ReactElement[] {
-    const { navigationItems } = this.props;
+  private renderNavigationItems(items: any[]): React.ReactElement[] {
     const elements: React.ReactElement[] = [];
     
-    if (!navigationItems || navigationItems.length === 0) {
+    if (!items || items.length === 0) {
       return [];
     }
 
     // Group items into chunks of 6
-    for (let i = 0; i < navigationItems.length; i += 6) {
-      const chunk = navigationItems.slice(i, i + 6);
+    for (let i = 0; i < items.length; i += 6) {
+      const chunk = items.slice(i, i + 6);
       const navigationLine = this.createNavigationLine(chunk, i);
       elements.push(navigationLine);
     }
@@ -57,8 +56,29 @@ export default class SpNavigationSection extends React.Component<ISpNavigationSe
     );
   }
 
+  private renderSections(): React.ReactElement[] {
+    const { navigationSections } = this.props;
+    
+    if (!navigationSections || navigationSections.length === 0) {
+      return [];
+    }
+
+    return navigationSections.map((section: INavigationSection, sectionIndex: number) => {
+      const navigationElements = this.renderNavigationItems(section.items);
+      
+      return (
+        <div key={`section-${sectionIndex}`} className={styles.navigationSectionContainer}>
+          <h3 className={styles.sectionHeader}>{escape(section.section)}</h3>
+          <div className={styles.navigationContent}>
+            {navigationElements}
+          </div>
+        </div>
+      );
+    });
+  }
+
   private renderContent(): React.ReactElement {
-    const { isLoading, errorMessage, navigationItems, selectedListId } = this.props;
+    const { isLoading, errorMessage, navigationSections, selectedListId } = this.props;
 
     if (isLoading) {
       return (
@@ -79,7 +99,7 @@ export default class SpNavigationSection extends React.Component<ISpNavigationSe
               <strong>Troubleshooting tips:</strong>
               <ul>
                 <li>Ensure the list has items</li>
-                <li>Create columns named &quot;Display Text&quot; and &quot;Link&quot;</li>
+                <li>Create columns named &quot;Display Text&quot;, &quot;Link&quot;, and &quot;Section&quot;</li>
                 <li>Check that you have permission to read the list</li>
               </ul>
             </div>
@@ -99,7 +119,7 @@ export default class SpNavigationSection extends React.Component<ISpNavigationSe
       );
     }
 
-    if (!navigationItems || navigationItems.length === 0) {
+    if (!navigationSections || navigationSections.length === 0) {
       return (
         <div className={styles.noItems}>
           <div className={styles.noItemsIcon}>📋</div>
@@ -107,16 +127,16 @@ export default class SpNavigationSection extends React.Component<ISpNavigationSe
             No navigation items found in the selected list.
           </div>
           <div className={styles.noItemsHelp}>
-            Add items to your list with &quot;Display Text&quot; and &quot;Link&quot; columns.
+            Add items to your list with &quot;Display Text&quot;, &quot;Link&quot;, and &quot;Section&quot; columns.
           </div>
         </div>
       );
     }
 
-    const navigationElements = this.renderNavigationItems();
+    const sectionElements = this.renderSections();
     return (
-      <div className={styles.navigationContent}>
-        {navigationElements}
+      <div className={styles.sectionsContainer}>
+        {sectionElements}
       </div>
     );
   }
