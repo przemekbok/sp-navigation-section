@@ -288,7 +288,7 @@ export default class SpNavigationSectionWebPart extends BaseClientSideWebPart<IS
 
     const selectedList = this._lists.find(list => list.id === this.properties.selectedListId);
     const newListUrl = `${this.context.pageContext.web.absoluteUrl}/_layouts/15/new.aspx`;
-    const listViewUrl = selectedList ? `${this.context.pageContext.web.absoluteUrl}/Lists/${selectedList.title.replace(/\s+/g, '')}` : '#';
+    const listViewUrl = selectedList ? `${this.context.pageContext.web.absoluteUrl}/Lists/${encodeURI(selectedList.title)}` : '#';
 
     return {
       pages: [

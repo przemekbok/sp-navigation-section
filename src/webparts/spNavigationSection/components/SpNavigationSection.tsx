@@ -63,7 +63,7 @@ export default class SpNavigationSection extends React.Component<ISpNavigationSe
     if (isLoading) {
       return (
         <div className={styles.loadingContainer}>
-          <div className={styles.loadingSpinner}></div>
+          <div className={styles.loadingSpinner}/>
           <div className={styles.loadingText}>Loading navigation items...</div>
         </div>
       );
@@ -79,7 +79,7 @@ export default class SpNavigationSection extends React.Component<ISpNavigationSe
               <strong>Troubleshooting tips:</strong>
               <ul>
                 <li>Ensure the list has items</li>
-                <li>Create columns named "Display Text" and "Link"</li>
+                <li>Create columns named &quot;Display Text&quot; and &quot;Link&quot;</li>
                 <li>Check that you have permission to read the list</li>
               </ul>
             </div>
@@ -107,7 +107,7 @@ export default class SpNavigationSection extends React.Component<ISpNavigationSe
             No navigation items found in the selected list.
           </div>
           <div className={styles.noItemsHelp}>
-            Add items to your list with "Display Text" and "Link" columns.
+            Add items to your list with &quot;Display Text&quot; and &quot;Link&quot; columns.
           </div>
         </div>
       );
