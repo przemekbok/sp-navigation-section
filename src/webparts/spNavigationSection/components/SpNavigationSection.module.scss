@@ -32,6 +32,37 @@
   // font-family: 'Roboto', Arial, sans-serif;
 }
 
+// Sections container
+.sectionsContainer {
+  margin-top: 20px;
+}
+
+// Individual section container
+.navigationSectionContainer {
+  margin-bottom: 30px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Section header styling
+.sectionHeader {
+  margin: 0 0 15px 0;
+  padding: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: "[theme:neutralPrimary, default: #323130]";
+  color: var(--neutralPrimary);
+  text-align: center;
+  border-bottom: 2px solid "[theme:neutralLight, default: #edebe9]";
+  border-bottom: 2px solid var(--neutralLight);
+  padding-bottom: 8px;
+  
+  // CUSTOM FONT FOR SECTION HEADERS EXAMPLE:
+  // font-family: 'Roboto', Arial, sans-serif;
+}
+
 .navigationContent {
   line-height: 2.0; // Increased line height for better spacing with larger text
   font-size: 18px; // Increased base font size for navigation area
@@ -50,6 +81,7 @@
   
   &:last-child {
     margin-right: 0;
+    margin-bottom: 0;
   }
 }
 
