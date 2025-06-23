@@ -1,8 +1,11 @@
 define([], function() {
   return {
-    "PropertyPaneDescription": "Description",
-    "BasicGroupName": "Group Name",
-    "DescriptionFieldLabel": "Description Field",
+    "PropertyPaneDescription": "Configure the navigation webpart settings",
+    "BasicGroupName": "Navigation Settings", 
+    "DescriptionFieldLabel": "Header Text",
+    "NavigationListLabel": "Select Navigation List",
+    "CreateNewListText": "Create New List",
+    "ViewSelectedListText": "View Selected List",
     "AppLocalEnvironmentSharePoint": "The app is running on your local environment as SharePoint web part",
     "AppLocalEnvironmentTeams": "The app is running on your local environment as Microsoft Teams app",
     "AppLocalEnvironmentOffice": "The app is running on your local environment in office.com",

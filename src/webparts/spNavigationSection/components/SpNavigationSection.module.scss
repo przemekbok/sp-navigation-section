@@ -1,15 +1,250 @@
 @import '~@fluentui/react/dist/sass/References.scss';
 
+// CUSTOM FONT USAGE:
+// To use custom fonts, you can declare them here or in a separate CSS file
+// Example: @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+// Or load from local assets: @font-face { font-family: 'MyCustomFont'; src: url('../assets/fonts/MyFont.woff2') format('woff2'); }
+
 .spNavigationSection {
   overflow: hidden;
   padding: 1em;
   color: "[theme:bodyText, default: #323130]";
   color: var(--bodyText);
+  
+  // CUSTOM FONT EXAMPLE: 
+  // font-family: 'Roboto', sans-serif; // Use your custom font here
+  
   &.teams {
     font-family: $ms-font-family-fallbacks;
   }
 }
 
+.header {
+  margin: 0 0 20px 0;
+  padding: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: "[theme:neutralPrimary, default: #323130]";
+  color: var(--neutralPrimary);
+  text-align: center; // Center the header text
+  
+  // CUSTOM FONT FOR HEADER EXAMPLE:
+  // font-family: 'Roboto', Arial, sans-serif;
+}
+
+.navigationContent {
+  line-height: 2.0; // Increased line height for better spacing with larger text
+  font-size: 18px; // Increased base font size for navigation area
+  text-align: center; // Center the navigation content
+}
+
+.navigationLine {
+  margin-bottom: 15px; // Increased margin for better spacing with larger text
+  line-height: 2.0;
+  text-align: center; // Center each navigation line
+  
+  // Prevent lines from starting or ending with slashes
+  &:first-child {
+    margin-left: 0;
+  }
+  
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.navigationLink {
+  text-decoration: none;
+  color: "[theme:themePrimary, default: #0078d4]";
+  color: var(--themePrimary);
+  cursor: pointer; // Ensure pointer cursor is set
+  display: inline;
+  font-size: 18px; // Larger font size for navigation links
+  
+  // Remove any default link styling as requested
+  border: none;
+  background: none;
+  padding: 3px 0; // Slightly larger padding for better click target
+  margin: 0;
+  font-weight: 400; // Regular weight for readability
+  
+  // CUSTOM FONT FOR LINKS EXAMPLE:
+  // font-family: 'Roboto', Arial, sans-serif;
+  
+  &:hover {
+    color: "[theme:themeDarkAlt, default: #106ebe]";
+    color: var(--themeDarkAlt);
+    text-decoration: none; // Keep no styling on hover as requested
+    cursor: pointer; // Explicitly set pointer cursor on hover
+    // Optional: subtle background highlight on hover (uncomment if desired)
+    // background-color: rgba(0, 120, 212, 0.05);
+    // border-radius: 2px;
+  }
+  
+  &:visited {
+    color: "[theme:themePrimary, default: #0078d4]";
+    color: var(--themePrimary);
+  }
+  
+  &:focus {
+    outline: 2px solid "[theme:themePrimary, default: #0078d4]";
+    outline: 2px solid var(--themePrimary);
+    outline-offset: 2px;
+    cursor: pointer;
+  }
+  
+  &:active {
+    color: "[theme:themeDark, default: #005a9e]";
+    color: var(--themeDark);
+    cursor: pointer;
+  }
+}
+
+.separator {
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+  margin: 0 8px; // Larger margin for better spacing with larger text
+  font-weight: normal;
+  font-size: 18px; // Match the navigation link font size
+}
+
+// Loading state styles
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.loadingSpinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid "[theme:neutralLight, default: #edebe9]";
+  border: 2px solid var(--neutralLight);
+  border-top: 2px solid "[theme:themePrimary, default: #0078d4]";
+  border-top: 2px solid var(--themePrimary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loadingText {
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+  font-size: 14px;
+}
+
+// Error state styles
+.errorContainer {
+  padding: 20px;
+  margin: 10px 0;
+  background-color: "[theme:errorBackground, default: #fef7f7]";
+  background-color: var(--errorBackground, #fef7f7);
+  border: 1px solid "[theme:errorText, default: #d13438]";
+  border: 1px solid var(--errorText, #d13438);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.errorIcon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.errorText {
+  color: "[theme:errorText, default: #d13438]";
+  color: var(--errorText, #d13438);
+  font-weight: 600;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.errorHelp {
+  text-align: left;
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+  font-size: 13px;
+  margin-top: 10px;
+  
+  strong {
+    color: "[theme:neutralPrimary, default: #323130]";
+    color: var(--neutralPrimary);
+  }
+  
+  ul {
+    margin: 8px 0 0 20px;
+    padding: 0;
+    
+    li {
+      margin-bottom: 4px;
+    }
+  }
+}
+
+// Configuration message styles
+.configurationMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  text-align: center;
+  background-color: "[theme:neutralLighterAlt, default: #faf9f8]";
+  background-color: var(--neutralLighterAlt, #faf9f8);
+  border: 1px dashed "[theme:neutralTertiary, default: #a19f9d]";
+  border: 1px dashed var(--neutralTertiary, #a19f9d);
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.configIcon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.configText {
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+// No items state styles
+.noItems {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  text-align: center;
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+}
+
+.noItemsIcon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.noItemsText {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: "[theme:neutralPrimary, default: #323130]";
+  color: var(--neutralPrimary);
+}
+
+.noItemsHelp {
+  font-size: 13px;
+  color: "[theme:neutralSecondary, default: #605e5c]";
+  color: var(--neutralSecondary);
+}
+
+// Legacy styles for backward compatibility
 .welcome {
   text-align: center;
 }
@@ -23,12 +258,12 @@
   a {
     text-decoration: none;
     color: "[theme:link, default:#03787c]";
-    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
+    color: var(--link);
 
     &:hover {
       text-decoration: underline;
       color: "[theme:linkHovered, default: #014446]";
-      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
+      color: var(--linkHovered);
     }
   }
 }
